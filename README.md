@@ -2,7 +2,7 @@ CommandTimer Beta 2.0
 By: Jason Scaroni  jscaroni@calpoly.edu
 
 The CommandTimer counts down to zero then executes whatever command is in the top box.  I've used it to grab images from web cams, and to shutdown my computer in an hour.  I've also thought of using the CommandTimer to execute a script that mirrors my website.  Anyway, I'm sure you could come up with a lot more uses.  Check for updates at "http://slipshoe.iadsf.com/software.html"
-
+![CommandTimer screenshot](CommandTimer.png "CommandTimer")
 
 Installation and Usage:
  
