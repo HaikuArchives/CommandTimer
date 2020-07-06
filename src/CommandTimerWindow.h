@@ -33,7 +33,6 @@ public:
 	void startStopClock();
 	void toggleRepeat();
 	void toggleAlarm();
-	void toggleTracker();
 	void togglePath();
 	void setPermissions(bool permission);
 	void getTime();
@@ -45,13 +44,11 @@ private:
 	long secondsBackup;
 	bool alarm;
 	bool repeat;
-	bool tracker;
 	bool path;
 
 	BButton* startStopButton;
 	BCheckBox* repeatCheckBox;
 	BCheckBox* alarmCheckBox;
-	BCheckBox* trackerCheckBox;
 	BCheckBox* pathCheckBox;
 	BTextControl* commandTextControl;
 	BTextControl* pathTextControl;

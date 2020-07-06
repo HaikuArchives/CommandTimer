@@ -20,64 +20,75 @@
 CommandTimerWindow::CommandTimerWindow(BRect cTWindowRect)
 	:
 	BWindow(cTWindowRect, "CommandTimer", B_TITLED_WINDOW,
-		B_AUTO_UPDATE_SIZE_LIMITS | B_NOT_V_RESIZABLE)
+		B_AUTO_UPDATE_SIZE_LIMITS | B_NOT_V_RESIZABLE | B_NOT_ZOOMABLE)
 {
 	commandTextControl = new BTextControl("commandTextControl",
 		B_TRANSLATE("Command:"), NULL, new BMessage('CMND'));
 	commandTextControl->SetDivider(60);
+	commandTextControl->SetExplicitMaxSize(BSize(B_SIZE_UNLIMITED, B_SIZE_UNSET));
 	commandTextControl->SetAlignment(B_ALIGN_RIGHT, B_ALIGN_LEFT);
 
 	pathTextControl = new BTextControl("pathTextControl",
 		B_TRANSLATE("Use path:"), "/boot/home", new BMessage('CMND'));
 	pathTextControl->SetDivider(60);
 	pathTextControl->SetAlignment(B_ALIGN_RIGHT, B_ALIGN_LEFT);
+	pathTextControl->SetExplicitMaxSize(BSize(B_SIZE_UNLIMITED, B_SIZE_UNSET));
 	pathTextControl->SetEnabled(false);
 
 	hoursTextControl = new BTextControl("hoursTextControl", NULL, "00", NULL);
+	hoursTextControl->SetExplicitMaxSize(BSize(B_SIZE_UNLIMITED, B_SIZE_UNSET));
+	hoursTextControl->SetAlignment(B_ALIGN_CENTER, B_ALIGN_CENTER);
+
 	minsTextControl = new BTextControl("minsTextControl", NULL, "00", NULL);
+	minsTextControl->SetExplicitMaxSize(BSize(B_SIZE_UNLIMITED, B_SIZE_UNSET));
+	minsTextControl->SetAlignment(B_ALIGN_CENTER, B_ALIGN_CENTER);
+
 	secsTextControl = new BTextControl("minsTextControl", NULL, "00", NULL);
+	secsTextControl->SetExplicitMaxSize(BSize(B_SIZE_UNLIMITED, B_SIZE_UNSET));
+	secsTextControl->SetAlignment(B_ALIGN_CENTER, B_ALIGN_CENTER);
 
 	startStopButton = new BButton("startStopButton", B_TRANSLATE("Start"),
 		new BMessage('CLOK'));
+	startStopButton->SetExplicitMaxSize(BSize(B_SIZE_UNLIMITED, B_SIZE_UNSET));
 
 	repeatCheckBox = new BCheckBox("repeatCheckBox", B_TRANSLATE("Repeat"),
 		new BMessage('REPT'));
-	alarmCheckBox = new BCheckBox("alarmCheckBox", B_TRANSLATE("Alarm"),
-		new BMessage('BEEP'));
-	trackerCheckBox = new BCheckBox("trackerCheckBox",
-		B_TRANSLATE("Use Tracker"), new BMessage('TRAK'));
+	repeatCheckBox->SetExplicitMaxSize(BSize(B_SIZE_UNLIMITED, B_SIZE_UNSET));
 
 	pathCheckBox = new BCheckBox("pathCheckBox", NULL, new BMessage('PATH'));
+	pathCheckBox->SetExplicitMaxSize(BSize(B_SIZE_UNLIMITED, B_SIZE_UNSET));
+
+	alarmCheckBox = new BCheckBox("alarmCheckBox", B_TRANSLATE("Alarm"),
+		new BMessage('BEEP'));
+	alarmCheckBox->SetExplicitMaxSize(BSize(B_SIZE_UNLIMITED, B_SIZE_UNSET));
 
 	BLayoutBuilder::Group<>(this, B_VERTICAL)
 		.SetInsets(B_USE_WINDOW_INSETS)
-		.Add(commandTextControl)
-		.AddGroup(B_HORIZONTAL, 0)
-			.Add(pathTextControl)
-			.Add(pathCheckBox)
+		.AddGrid(B_USE_DEFAULT_SPACING, 0)
+			.Add(commandTextControl->CreateLabelLayoutItem(), 0, 0)
+			.Add(commandTextControl->CreateTextViewLayoutItem(), 1, 0, 2, 1)
+			.Add(pathTextControl->CreateLabelLayoutItem(), 0, 1)
+			.Add(pathTextControl->CreateTextViewLayoutItem(), 1, 1)
+			.Add(pathCheckBox, 2, 1)
+			.Add(repeatCheckBox, 1, 2)
+			.Add(alarmCheckBox, 1, 3)
+			.SetColumnWeight(1, 10.f)
 		.End()
 		.Add(new BSeparatorView(B_HORIZONTAL))
-		.AddGroup(B_HORIZONTAL, B_USE_DEFAULT_SPACING)
-			.AddGroup(B_VERTICAL, 0)
-				.Add(repeatCheckBox)
-				.Add(alarmCheckBox)
-				.Add(trackerCheckBox)
-			.End()
-			.AddGroup(B_VERTICAL, 0)
-				.AddGroup(B_HORIZONTAL, 0)
-					.Add(hoursTextControl)
-					.Add(minsTextControl)
-					.Add(secsTextControl)
-				.End()
-				.Add(startStopButton)
-			.End()
+		.AddGroup(B_HORIZONTAL, B_USE_HALF_ITEM_SPACING)
+			.AddGlue(100)
+			.Add(hoursTextControl)
+			.Add(minsTextControl)
+			.Add(secsTextControl)
+			.AddStrut(B_USE_BIG_SPACING)
+			.Add(startStopButton)
+			.AddGlue(100)
 		.End()
 	.End();
 
 	isRunning = false;
 	alarm = false;
 	repeat = false;
-	tracker = false;
 	path = false;
 
 	runner
@@ -110,12 +121,10 @@ CommandTimerWindow::MessageReceived(BMessage* cTMessage)
 		case 'BEEP':
 			toggleAlarm();
 			break;
-		case 'TRAK':
-			toggleTracker();
-			break;
 		case 'PATH':
 			togglePath();
 			break;
+
 		default:
 			BWindow::MessageReceived(cTMessage);
 			break;
@@ -191,13 +200,6 @@ CommandTimerWindow::toggleAlarm()
 
 
 void
-CommandTimerWindow::toggleTracker()
-{
-	tracker = !tracker;
-}
-
-
-void
 CommandTimerWindow::togglePath()
 {
 	path = !path;
@@ -230,28 +232,12 @@ CommandTimerWindow::getTime()
 void
 CommandTimerWindow::executeCommand()
 {
-	char* buf;
-	int length = 3;
-
-	if (path)
-		length += strlen(pathTextControl->Text());
-	if (tracker)
-		length += 24;
-	length += strlen(commandTextControl->Text());
-	buf = new char[length];
-
-	buf[0] = '\0';
-
-	if (tracker)
-		strcat(buf, "/boot/system/Tracker ");
+	BString cmd = "%command% &";
 	if (path) {
-		strcat(buf, pathTextControl->Text());
-		strcat(buf, "/");
+		cmd = "cd %path% ; %command% &";
+		cmd.ReplaceFirst("%path%", pathTextControl->Text());
 	}
+	cmd.ReplaceFirst("%command%", commandTextControl->Text());
 
-	strcat(buf, commandTextControl->Text());
-	strcat(buf, " &");
-	system(buf);
-
-	delete[] buf;
+	system(cmd);
 }
