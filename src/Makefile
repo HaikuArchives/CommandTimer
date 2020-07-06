@@ -31,15 +31,13 @@ APP_MIME_SIG =
 SRCS = \
 	 CommandTimer.cpp  \
 	 CommandTimerApp.cpp  \
-	 CommandTimerView.cpp  \
 	 CommandTimerWindow.cpp  \
 
 
 #	Specify the resource definition files to use. Full or relative paths can be
 #	used.
 RDEFS = \
-	 CommandTimer.rdef  \
-
+	 CommandTimer.rdef
 
 #	Specify the resource files to use. Full or relative paths can be used.
 #	Both RDEFS and RSRCS can be utilized in the same Makefile.
@@ -66,7 +64,7 @@ RSRCS = \
 #	- 	if your library does not follow the standard library naming scheme,
 #		you need to specify the path to the library and it's name.
 #		(e.g. for mylib.a, specify "mylib.a" or "path/mylib.a")
-LIBS = $(STDCPPLIBS) be
+LIBS = $(STDCPPLIBS) be localestub
 
 #	Specify additional paths to directories following the standard libXXX.so
 #	or libXXX.a naming scheme. You can specify full paths or paths relative

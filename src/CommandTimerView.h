@@ -1,3 +1,12 @@
+/*
+ * Copyright 2020. All rights reserved.
+ * Distributed under the terms of the MIT license.
+ *
+ * Author:
+ *	Jason Scaroni, jscaroni@calpoly.edu
+ *	Humdinger, humdingerb@gmail.com
+ */
+
 #ifndef COMMANDTIMERVIEW_H
 #define COMMANDTIMERVIEW_H
 
@@ -13,7 +22,7 @@
 class CommandTimerView : public BView
 {
 public:
-	CommandTimerView(BRect cTViewRect);
+	CommandTimerView(BRect frame);
 	~CommandTimerView();
 
 	virtual void AttachedToWindow();

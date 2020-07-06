@@ -1,3 +1,12 @@
+/*
+ * Copyright 2020. All rights reserved.
+ * Distributed under the terms of the MIT license.
+ *
+ * Author:
+ *	Jason Scaroni, jscaroni@calpoly.edu
+ *	Humdinger, humdingerb@gmail.com
+ */
+
 #ifndef COMMANDTIMERAPP_H
 #define COMMANDTIMERAPP_H
 

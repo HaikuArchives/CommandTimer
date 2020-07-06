@@ -1,10 +1,85 @@
+/*
+ * Copyright 2020. All rights reserved.
+ * Distributed under the terms of the MIT license.
+ *
+ * Author:
+ *	Jason Scaroni, jscaroni@calpoly.edu
+ *	Humdinger, humdingerb@gmail.com
+ */
+
 #include "CommandTimerView.h"
 
+#include <Catalog.h>
+#include <ControlLook.h>
+#include <LayoutBuilder.h>
+#include <SeparatorView.h>
 
-CommandTimerView::CommandTimerView(BRect cTViewRect)
+#undef B_TRANSLATION_CONTEXT
+#define B_TRANSLATION_CONTEXT "TimeView"
+
+
+CommandTimerView::CommandTimerView(BRect frame)
 	:
-	BView(cTViewRect, "CommandTimerView", B_FOLLOW_ALL, B_WILL_DRAW)
+	BView(frame, "CommandTimerView", B_FOLLOW_ALL_SIDES, B_WILL_DRAW
+		| B_SUPPORTS_LAYOUT)
 {
+	commandTextControl = new BTextControl("commandTextControl",
+		B_TRANSLATE("Command:"), NULL, new BMessage('CMND'));
+	commandTextControl->SetDivider(60);
+	commandTextControl->SetAlignment(B_ALIGN_RIGHT, B_ALIGN_LEFT);
+
+	pathTextControl = new BTextControl("pathTextControl",
+		B_TRANSLATE("Use path:"), "/boot/home", new BMessage('CMND'));
+	pathTextControl->SetDivider(60);
+	pathTextControl->SetAlignment(B_ALIGN_RIGHT, B_ALIGN_LEFT);
+	pathTextControl->SetEnabled(false);
+
+	hoursTextControl = new BTextControl("hoursTextControl", NULL, "00", NULL);
+	minsTextControl = new BTextControl("minsTextControl", NULL, "00", NULL);
+	secsTextControl = new BTextControl("minsTextControl", NULL, "00", NULL);
+
+	startStopButton = new BButton("startStopButton", B_TRANSLATE("Start"),
+		new BMessage('CLOK'));
+
+	repeatCheckBox = new BCheckBox("repeatCheckBox", B_TRANSLATE("Repeat"),
+		new BMessage('REPT'));
+	alarmCheckBox = new BCheckBox("alarmCheckBox", B_TRANSLATE("Alarm"),
+		new BMessage('BEEP'));
+	trackerCheckBox = new BCheckBox("trackerCheckBox",
+		B_TRANSLATE("Use Tracker"), new BMessage('TRAK'));
+
+	pathCheckBox = new BCheckBox("pathCheckBox", NULL, new BMessage('PATH'));
+
+	BLayoutBuilder::Group<>(this, B_VERTICAL)
+		.SetInsets(B_USE_WINDOW_INSETS)
+		.Add(commandTextControl)
+		.AddGroup(B_HORIZONTAL, 0)
+			.Add(pathTextControl)
+			.Add(pathCheckBox)
+		.End()
+		.Add(new BSeparatorView(B_HORIZONTAL))
+		.AddGroup(B_HORIZONTAL, 0)
+			.AddGroup(B_VERTICAL, 0)
+				.Add(repeatCheckBox)
+				.Add(alarmCheckBox)
+				.Add(trackerCheckBox)
+			.End()
+			.AddGroup(B_VERTICAL, 0)
+				.AddGroup(B_HORIZONTAL, 0)
+					.Add(hoursTextControl)
+					.Add(minsTextControl)
+					.Add(secsTextControl)
+				.End()
+				.Add(startStopButton)
+			.End()
+		.End()
+	.End();
+
+	isRunning = false;
+	alarm = false;
+	repeat = false;
+	tracker = false;
+	path = false;
 }
 
 
@@ -27,74 +102,6 @@ CommandTimerView::~CommandTimerView()
 void
 CommandTimerView::AttachedToWindow()
 {
-	BRect tempRect(25, 15, 265, 25);
-	commandTextControl = new BTextControl(tempRect, "commandTextControl",
-		"Command:", NULL, new BMessage('CMND'), B_FOLLOW_LEFT | B_FOLLOW_TOP,
-		B_WILL_DRAW | B_NAVIGABLE);
-	commandTextControl->SetDivider(60);
-	commandTextControl->SetAlignment(B_ALIGN_RIGHT, B_ALIGN_LEFT);
-	AddChild(commandTextControl);
-
-	tempRect.Set(25, 45, 265, 55);
-	pathTextControl = new BTextControl(tempRect, "pathTextControl",
-		"Use Path:", NULL, new BMessage('CMND'), B_FOLLOW_LEFT | B_FOLLOW_TOP,
-		B_WILL_DRAW | B_NAVIGABLE);
-	pathTextControl->SetDivider(60);
-	pathTextControl->SetAlignment(B_ALIGN_RIGHT, B_ALIGN_LEFT);
-	pathTextControl->SetText("/boot/home");
-	pathTextControl->SetEnabled(false);
-	AddChild(pathTextControl);
-
-	tempRect.Set(60, 78, 82, 90);
-	hoursTextControl = new BTextControl(tempRect, "hoursTextControl", NULL,
-		"00", NULL, B_FOLLOW_LEFT | B_FOLLOW_TOP, B_WILL_DRAW | B_NAVIGABLE);
-	AddChild(hoursTextControl);
-
-	tempRect.Set(85, 78, 107, 90);
-	minsTextControl = new BTextControl(tempRect, "minsTextControl", NULL, "00",
-		NULL, B_FOLLOW_LEFT | B_FOLLOW_TOP, B_WILL_DRAW | B_NAVIGABLE);
-	AddChild(minsTextControl);
-
-	tempRect.Set(110, 78, 132, 90);
-	secsTextControl = new BTextControl(tempRect, "minsTextControl", NULL, "00",
-		NULL, B_FOLLOW_LEFT | B_FOLLOW_TOP, B_WILL_DRAW | B_NAVIGABLE);
-	AddChild(secsTextControl);
-
-	tempRect.Set(175, 75, 225, 85);
-	startStopButton = new BButton(
-		tempRect, "startStopButton", "Start", new BMessage('CLOK'));
-	AddChild(startStopButton);
-
-	tempRect.Set(30, 105, 100, 115);
-	repeatCheckBox = new BCheckBox(tempRect, "repeatCheckBox", "Repeat",
-		new BMessage('REPT'), B_FOLLOW_LEFT | B_FOLLOW_TOP,
-		B_WILL_DRAW | B_NAVIGABLE);
-	AddChild(repeatCheckBox);
-
-	tempRect.Set(120, 105, 190, 115);
-	alarmCheckBox = new BCheckBox(tempRect, "alarmCheckBox", "Alarm",
-		new BMessage('BEEP'), B_FOLLOW_LEFT | B_FOLLOW_TOP,
-		B_WILL_DRAW | B_NAVIGABLE);
-	AddChild(alarmCheckBox);
-
-	tempRect.Set(200, 105, 290, 115);
-	trackerCheckBox = new BCheckBox(tempRect, "trackerCheckBox", "Use Tracker",
-		new BMessage('TRAK'), B_FOLLOW_LEFT | B_FOLLOW_TOP,
-		B_WILL_DRAW | B_NAVIGABLE);
-	AddChild(trackerCheckBox);
-
-	tempRect.Set(270, 45, 300, 55);
-	pathCheckBox
-		= new BCheckBox(tempRect, "pathCheckBox", NULL, new BMessage('PATH'),
-			B_FOLLOW_LEFT | B_FOLLOW_TOP, B_WILL_DRAW | B_NAVIGABLE);
-	AddChild(pathCheckBox);
-
-	isRunning = false;
-	alarm = false;
-	repeat = false;
-	tracker = false;
-	path = false;
-
 	runner
 		= new BMessageRunner(BMessenger(this), new BMessage('PULS'), 1000000);
 }
@@ -140,12 +147,12 @@ CommandTimerView::startStopClock()
 	if (isRunning) {
 		setPermissions(true);
 		isRunning = false;
-		startStopButton->SetLabel("Start");
+		startStopButton->SetLabel(B_TRANSLATE("Start"));
 	} else {
 		setPermissions(false);
 		isRunning = true;
 		getTime();
-		startStopButton->SetLabel("Stop");
+		startStopButton->SetLabel(B_TRANSLATE("Stop"));
 	}
 }
 
@@ -216,7 +223,7 @@ CommandTimerView::executeCommand()
 	buf[0] = '\0';
 
 	if (tracker)
-		strcat(buf, "/boot/beos/system/Tracker ");
+		strcat(buf, "/boot/system/Tracker ");
 	if (path) {
 		strcat(buf, pathTextControl->Text());
 		strcat(buf, "/");
