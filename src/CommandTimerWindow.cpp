@@ -1,7 +1,9 @@
 #include "CommandTimerWindow.h"
 
+
 CommandTimerWindow::CommandTimerWindow(BRect cTWindowRect)
-	: BWindow(cTWindowRect, "CommandTimer", B_TITLED_WINDOW,
+	:
+	BWindow(cTWindowRect, "CommandTimer", B_TITLED_WINDOW,
 		B_NOT_RESIZABLE | B_NOT_ZOOMABLE)
 {
 	cTView = new CommandTimerView(Bounds());
@@ -9,17 +11,20 @@ CommandTimerWindow::CommandTimerWindow(BRect cTWindowRect)
 	AddChild(cTView);
 }
 
-bool CommandTimerWindow::QuitRequested()
+
+bool
+CommandTimerWindow::QuitRequested()
 {
 	be_app->PostMessage(B_QUIT_REQUESTED);
 
 	return true;
 }
 
-void CommandTimerWindow::MessageReceived(BMessage *cTMessage)
+
+void
+CommandTimerWindow::MessageReceived(BMessage* cTMessage)
 {
-	switch(cTMessage->what)
-	{
+	switch (cTMessage->what) {
 		case 'PULS':
 			cTView->doPulse();
 			break;

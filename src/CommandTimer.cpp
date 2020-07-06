@@ -1,13 +1,15 @@
 #include "CommandTimerApp.h"
 
-int main()
+
+int
+main()
 {
-	CommandTimerApp *cTApp;
-	
+	CommandTimerApp* cTApp;
+
 	cTApp = new CommandTimerApp();
 	cTApp->Run();
 	cTApp->PostMessage(B_QUIT_REQUESTED);
 	delete cTApp;
-	
+
 	return 0;
 }
