@@ -141,7 +141,7 @@ void
 CommandTimerWindow::doPulse()
 {
 	if (isRunning) {
-		if (seconds)
+		if (seconds > 1)
 			seconds--;
 		else {
 			if (isRunning) {
@@ -176,6 +176,8 @@ CommandTimerWindow::startStopClock()
 	if (isRunning) {
 		setPermissions(true);
 		isRunning = false;
+		seconds = secondsBackup;
+		updateTime();
 		startStopButton->SetLabel(B_TRANSLATE("Start"));
 	} else {
 		setPermissions(false);
