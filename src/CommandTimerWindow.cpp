@@ -23,40 +23,37 @@ CommandTimerWindow::CommandTimerWindow(BRect cTWindowRect)
 		B_AUTO_UPDATE_SIZE_LIMITS | B_NOT_V_RESIZABLE | B_NOT_ZOOMABLE)
 {
 	commandTextControl = new BTextControl("commandTextControl",
-		B_TRANSLATE("Command:"), NULL, new BMessage('CMND'));
+		B_TRANSLATE("Command:"), NULL, NULL);
+	commandTextControl->SetModificationMessage(new BMessage('CMND'));
 	commandTextControl->SetDivider(60);
-	commandTextControl->SetExplicitMaxSize(BSize(B_SIZE_UNLIMITED, B_SIZE_UNSET));
 	commandTextControl->SetAlignment(B_ALIGN_RIGHT, B_ALIGN_LEFT);
 
 	pathTextControl = new BTextControl("pathTextControl",
-		B_TRANSLATE("Use path:"), "/boot/home", new BMessage('CMND'));
+		B_TRANSLATE("Execute in:"), "/boot/home", NULL);
+	pathTextControl->SetModificationMessage(new BMessage('CMND'));
 	pathTextControl->SetDivider(60);
 	pathTextControl->SetAlignment(B_ALIGN_RIGHT, B_ALIGN_LEFT);
-	pathTextControl->SetExplicitMaxSize(BSize(B_SIZE_UNLIMITED, B_SIZE_UNSET));
 	pathTextControl->SetEnabled(false);
 
-	hoursTextControl = new BTextControl("hoursTextControl", NULL, "00", NULL);
-	hoursTextControl->SetExplicitMaxSize(BSize(B_SIZE_UNLIMITED, B_SIZE_UNSET));
-	hoursTextControl->SetAlignment(B_ALIGN_CENTER, B_ALIGN_CENTER);
+	hoursSpinner = new BSpinner("hoursSpinner", B_TRANSLATE("Hours:"), NULL);
+	hoursSpinner->SetRange(0, 10000);
 
-	minsTextControl = new BTextControl("minsTextControl", NULL, "00", NULL);
-	minsTextControl->SetExplicitMaxSize(BSize(B_SIZE_UNLIMITED, B_SIZE_UNSET));
-	minsTextControl->SetAlignment(B_ALIGN_CENTER, B_ALIGN_CENTER);
+	minsSpinner = new BSpinner("minsSpinner", B_TRANSLATE("Minutes:"), NULL);
+	minsSpinner->SetRange(0, 59);
 
-	secsTextControl = new BTextControl("minsTextControl", NULL, "00", NULL);
-	secsTextControl->SetExplicitMaxSize(BSize(B_SIZE_UNLIMITED, B_SIZE_UNSET));
-	secsTextControl->SetAlignment(B_ALIGN_CENTER, B_ALIGN_CENTER);
+	secsSpinner = new BSpinner("minsSpinner", B_TRANSLATE("Seconds:"), NULL);
+	secsSpinner->SetRange(0, 59);
 
 	startStopButton = new BButton("startStopButton", B_TRANSLATE("Start"),
 		new BMessage('CLOK'));
-	startStopButton->SetExplicitMaxSize(BSize(B_SIZE_UNLIMITED, B_SIZE_UNSET));
+	startStopButton->SetEnabled(false);
+	startStopButton->SetExplicitMaxSize(BSize(B_SIZE_UNLIMITED, B_SIZE_UNLIMITED));
 
 	repeatCheckBox = new BCheckBox("repeatCheckBox", B_TRANSLATE("Repeat"),
 		new BMessage('REPT'));
 	repeatCheckBox->SetExplicitMaxSize(BSize(B_SIZE_UNLIMITED, B_SIZE_UNSET));
 
 	pathCheckBox = new BCheckBox("pathCheckBox", NULL, new BMessage('PATH'));
-	pathCheckBox->SetExplicitMaxSize(BSize(B_SIZE_UNLIMITED, B_SIZE_UNSET));
 
 	alarmCheckBox = new BCheckBox("alarmCheckBox", B_TRANSLATE("Alarm"),
 		new BMessage('BEEP'));
@@ -76,13 +73,17 @@ CommandTimerWindow::CommandTimerWindow(BRect cTWindowRect)
 		.End()
 		.Add(new BSeparatorView(B_HORIZONTAL))
 		.AddGroup(B_HORIZONTAL, B_USE_HALF_ITEM_SPACING)
-			.AddGlue(100)
-			.Add(hoursTextControl)
-			.Add(minsTextControl)
-			.Add(secsTextControl)
-			.AddStrut(B_USE_BIG_SPACING)
-			.Add(startStopButton)
-			.AddGlue(100)
+			.AddGlue()
+			.AddGrid(B_USE_DEFAULT_SPACING, B_USE_HALF_ITEM_SPACING)
+				.Add(hoursSpinner->CreateLabelLayoutItem(), 0, 0)
+				.Add(hoursSpinner->CreateTextViewLayoutItem(), 1, 0)
+				.Add(minsSpinner->CreateLabelLayoutItem(), 0, 1)
+				.Add(minsSpinner->CreateTextViewLayoutItem(), 1, 1)
+				.Add(secsSpinner->CreateLabelLayoutItem(), 0, 2)
+				.Add(secsSpinner->CreateTextViewLayoutItem(), 1, 2)
+				.Add(startStopButton, 3, 0, 1, 3)
+			.End()
+			.AddGlue()
 		.End()
 	.End();
 
@@ -111,6 +112,10 @@ CommandTimerWindow::MessageReceived(BMessage* cTMessage)
 	switch (cTMessage->what) {
 		case 'PULS':
 			doPulse();
+			break;
+		case 'CMND':
+			startStopButton->SetEnabled(commandTextControl->TextLength() == 0
+				? false : true);
 			break;
 		case 'CLOK':
 			startStopClock();
@@ -159,13 +164,9 @@ CommandTimerWindow::doPulse()
 void
 CommandTimerWindow::updateTime()
 {
-	char digits[3];
-	sprintf(digits, "%02ld", seconds / 3600);
-	hoursTextControl->SetText(digits);
-	sprintf(digits, "%02ld", (seconds / 60) % 60);
-	minsTextControl->SetText(digits);
-	sprintf(digits, "%02ld", seconds % 60);
-	secsTextControl->SetText(digits);
+	hoursSpinner->SetValue(seconds / 3600);
+	minsSpinner->SetValue((seconds / 60) % 60);
+	secsSpinner->SetValue(seconds % 60);
 }
 
 
@@ -213,18 +214,18 @@ CommandTimerWindow::setPermissions(bool permission)
 	commandTextControl->SetEnabled(permission);
 	pathCheckBox->SetEnabled(permission);
 	pathTextControl->SetEnabled(permission ? path : false);
-	hoursTextControl->SetEnabled(permission);
-	minsTextControl->SetEnabled(permission);
-	secsTextControl->SetEnabled(permission);
+	hoursSpinner->SetEnabled(permission);
+	minsSpinner->SetEnabled(permission);
+	secsSpinner->SetEnabled(permission);
 }
 
 
 void
 CommandTimerWindow::getTime()
 {
-	seconds = atoi(hoursTextControl->Text()) * 3600
-		+ atoi(minsTextControl->Text()) * 60
-		+ atoi(secsTextControl->Text());
+	seconds = hoursSpinner->Value() * 3600
+		+ minsSpinner->Value() * 60
+		+ secsSpinner->Value();
 	secondsBackup = seconds;
 }
 

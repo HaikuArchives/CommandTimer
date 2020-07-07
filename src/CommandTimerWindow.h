@@ -10,13 +10,12 @@
 #ifndef COMMANDTIMERWINDOW_H
 #define COMMANDTIMERWINDOW_H
 
-#include "CommandTimerView.h"
-
 #include <Application.h>
 #include <CheckBox.h>
 #include <InterfaceKit.h>
 #include <MessageRunner.h>
 #include <SupportKit.h>
+#include <Spinner.h>
 #include <TextControl.h>
 #include <Window.h>
 
@@ -40,8 +39,8 @@ public:
 
 private:
 	bool isRunning;
-	long seconds;
-	long secondsBackup;
+	int32 seconds;
+	int32 secondsBackup;
 	bool alarm;
 	bool repeat;
 	bool path;
@@ -52,9 +51,9 @@ private:
 	BCheckBox* pathCheckBox;
 	BTextControl* commandTextControl;
 	BTextControl* pathTextControl;
-	BTextControl* hoursTextControl;
-	BTextControl* minsTextControl;
-	BTextControl* secsTextControl;
+	BSpinner* hoursSpinner;
+	BSpinner* minsSpinner;
+	BSpinner* secsSpinner;
 	BMessageRunner* runner;
 };
 
