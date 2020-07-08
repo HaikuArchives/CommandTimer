@@ -135,8 +135,10 @@ CommandTimerWindow::MessageReceived(BMessage* cTMessage)
 		case B_SIMPLE_DATA:
 		{
 			if (cTMessage->WasDropped()) {
-				BRect commandRect = commandTextControl->ConvertToScreen(commandTextControl->Bounds());
-				BRect pathRect = pathTextControl->ConvertToScreen(pathTextControl->Bounds());
+				BRect commandRect = commandTextControl->ConvertToScreen(
+					commandTextControl->Bounds());
+				BRect pathRect = pathTextControl->ConvertToScreen(
+					pathTextControl->Bounds());
 				BPoint dropPoint = cTMessage->DropPoint();
 
 				if (commandRect.Contains(dropPoint))
@@ -164,7 +166,7 @@ CommandTimerWindow::getPath(BMessage* message)
 {
 	int32 ref_num;
 	entry_ref ref;
-	BString text = "Error";
+	BString text = B_TRANSLATE("Error");
 
 	if (message->FindRef("refs", &ref) == B_OK) {
 		BPath path;
@@ -172,7 +174,7 @@ CommandTimerWindow::getPath(BMessage* message)
 		entry->GetPath(&path);
 		text = path.Path();
 	}
-	return(text);
+	return (text);
 }
 
 
@@ -187,18 +189,17 @@ CommandTimerWindow::getFolder(BMessage* message)
 		BEntry* entry = new BEntry(&ref);
 		entry->GetPath(&path);
 
-		if (entry->IsSymLink()) {	// Resolve symlinked folders only
+		if (entry->IsSymLink()) { // Resolve symlinked folders only
 			entry = new BEntry(&ref, true);
 			if (entry->IsDirectory())
 				entry->GetPath(&path);
 		}
-
 		if (!entry->IsDirectory())
 			path.GetParent(&path);
 
 		text = path.Path();
 	}
-	return(text);
+	return (text);
 }
 
 

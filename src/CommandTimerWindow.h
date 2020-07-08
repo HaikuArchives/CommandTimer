@@ -27,35 +27,35 @@ public:
 	virtual void MessageReceived(BMessage* cTMessage);
 	virtual bool QuitRequested();
 
-	void doPulse();
-	void updateTime();
-	void startStopClock();
-	void toggleRepeat();
-	void toggleAlarm();
-	void togglePath();
-	void setPermissions(bool permission);
-	void getTime();
-	BString getPath(BMessage* message);
-	BString getFolder(BMessage* message);
-	void executeCommand();
-
 private:
-	bool isRunning;
-	int32 seconds;
-	int32 secondsBackup;
-	bool alarm;
-	bool repeat;
-	bool path;
+	void 		doPulse();
+	void 		updateTime();
+	void 		startStopClock();
+	void 		toggleRepeat();
+	void 		toggleAlarm();
+	void 		togglePath();
+	void 		setPermissions(bool permission);
+	void 		getTime();
+	BString 	getPath(BMessage* message);
+	BString 	getFolder(BMessage* message);
+	void 		executeCommand();
 
-	BButton* startStopButton;
-	BCheckBox* repeatCheckBox;
-	BCheckBox* alarmCheckBox;
-	BCheckBox* pathCheckBox;
+	bool 		isRunning;
+	int32 		seconds;
+	int32 		secondsBackup;
+	bool 		alarm;
+	bool 		repeat;
+	bool 		path;
+
+	BButton* 	startStopButton;
+	BCheckBox* 	repeatCheckBox;
+	BCheckBox* 	alarmCheckBox;
+	BCheckBox* 	pathCheckBox;
 	BTextControl* commandTextControl;
 	BTextControl* pathTextControl;
-	BSpinner* hoursSpinner;
-	BSpinner* minsSpinner;
-	BSpinner* secsSpinner;
+	BSpinner* 	hoursSpinner;
+	BSpinner* 	minsSpinner;
+	BSpinner* 	secsSpinner;
 	BMessageRunner* runner;
 };
 
