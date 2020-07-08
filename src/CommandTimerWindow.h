@@ -14,8 +14,8 @@
 #include <CheckBox.h>
 #include <InterfaceKit.h>
 #include <MessageRunner.h>
-#include <SupportKit.h>
 #include <Spinner.h>
+#include <SupportKit.h>
 #include <TextControl.h>
 #include <Window.h>
 

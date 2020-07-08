@@ -1,5 +1,20 @@
 
-resource file_types message;
+resource app_signature "application/x-vnd.jas.CommandTimer";
+
+resource app_version {
+	major  = 0,
+	middle = 3,
+	minor  = 0,
+
+	variety = B_APPV_FINAL,
+	internal = 0,
+
+	short_info = "A count down for starting apps",
+	long_info = "CommandTimer counts down a specified amount of time, then \
+		executes a command."
+};
+
+resource app_flags B_MULTIPLE_LAUNCH;
 
 resource large_icon array {
 	$"FFFFFFFFFFFFFFFFFFFFFFFF01010101010101FFFFFFFFFFFFFFFFFFFFFFFFFF"
@@ -54,20 +69,3 @@ resource mini_icon array {
 	$"FFFFFF0112121E011E121201FFFFFFFF"
 	$"FFFFFFFF01010101010101FFFFFFFFFF"
 };
-
-resource app_signature "application/x-vnd.jas.CommandTimer";
-
-resource app_version {
-	major  = 0,
-	middle = 2,
-	minor  = 0,
-
-	variety = B_APPV_BETA,
-	internal = 0,
-
-	short_info = "CommandTimer",
-	long_info = "CommandTimer counts down a user specified amount of time, then \
-		executes a user defined command."
-};
-
-resource app_flags B_MULTIPLE_LAUNCH;
