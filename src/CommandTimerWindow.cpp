@@ -9,10 +9,14 @@
 
 #include "CommandTimerWindow.h"
 
+
+#include <Bitmap.h>
 #include <Catalog.h>
 #include <ControlLook.h>
+#include <IconUtils.h>
 #include <LayoutBuilder.h>
 #include <Path.h>
+#include <Resources.h>
 #include <SeparatorView.h>
 
 #undef B_TRANSLATION_CONTEXT
@@ -24,34 +28,54 @@ CommandTimerWindow::CommandTimerWindow(BRect cTWindowRect)
 	BWindow(cTWindowRect, B_TRANSLATE_SYSTEM_NAME("CommandTimer"), B_TITLED_WINDOW,
 		B_AUTO_UPDATE_SIZE_LIMITS | B_NOT_V_RESIZABLE | B_NOT_ZOOMABLE)
 {
+	// TextControls
 	commandTextControl = new BTextControl(
 		"commandTextControl", B_TRANSLATE("Command:"), NULL, NULL);
 	commandTextControl->SetModificationMessage(new BMessage('CMND'));
-	commandTextControl->SetDivider(60);
 	commandTextControl->SetAlignment(B_ALIGN_RIGHT, B_ALIGN_LEFT);
 
 	pathTextControl = new BTextControl(
 		"pathTextControl", B_TRANSLATE("Execute in:"), "/boot/home", NULL);
 	pathTextControl->SetModificationMessage(new BMessage('CMND'));
-	pathTextControl->SetDivider(60);
 	pathTextControl->SetAlignment(B_ALIGN_RIGHT, B_ALIGN_LEFT);
 	pathTextControl->SetEnabled(false);
 
+	// Spinners
 	hoursSpinner = new BSpinner("hoursSpinner", B_TRANSLATE("Hours:"), NULL);
 	hoursSpinner->SetRange(0, 10000);
 
 	minsSpinner = new BSpinner("minsSpinner", B_TRANSLATE("Minutes:"), NULL);
 	minsSpinner->SetRange(0, 59);
 
-	secsSpinner = new BSpinner("minsSpinner", B_TRANSLATE("Seconds:"), NULL);
+	secsSpinner = new BSpinner("secSpinner", B_TRANSLATE("Seconds:"), NULL);
 	secsSpinner->SetRange(0, 59);
 
+	// Buttons
 	startStopButton = new BButton(
 		"startStopButton", B_TRANSLATE("Start"), new BMessage('CLOK'));
 	startStopButton->SetEnabled(false);
 	startStopButton->SetExplicitMaxSize(
 		BSize(B_SIZE_UNLIMITED, B_SIZE_UNLIMITED));
 
+	chooseCommandButton = new BButton(NULL, new BMessage('CHCB'));
+	choosePathButton = new BButton(NULL, new BMessage('CHPB'));
+	size_t size;
+	BResources* resources = BApplication::AppResources();
+	const uint8* data = static_cast<const uint8*>(resources->LoadResource(
+		B_VECTOR_ICON_TYPE, 2, &size));
+	font_height	fontHeight;
+	be_plain_font->GetHeight(&fontHeight);
+	float height = fontHeight.ascent + fontHeight.descent + fontHeight.leading
+		- 4;
+	BBitmap* icon = new BBitmap(BRect(0, 0, height, height), 0, B_RGBA32);
+	if (icon != NULL) {
+		if (BIconUtils::GetVectorIcon(data, size, icon) == B_OK) {
+			chooseCommandButton->SetIcon(icon);
+			choosePathButton->SetIcon(icon);
+		}
+	}
+
+	// Checkboxes
 	repeatCheckBox = new BCheckBox(
 		"repeatCheckBox", B_TRANSLATE("Repeat"), new BMessage('REPT'));
 	repeatCheckBox->SetExplicitMaxSize(BSize(B_SIZE_UNLIMITED, B_SIZE_UNSET));
@@ -62,16 +86,19 @@ CommandTimerWindow::CommandTimerWindow(BRect cTWindowRect)
 		"alarmCheckBox", B_TRANSLATE("Alarm"), new BMessage('BEEP'));
 	alarmCheckBox->SetExplicitMaxSize(BSize(B_SIZE_UNLIMITED, B_SIZE_UNSET));
 
+	// Do the layout
 	BLayoutBuilder::Group<>(this, B_VERTICAL)
 		.SetInsets(B_USE_WINDOW_INSETS)
-		.AddGrid(B_USE_DEFAULT_SPACING, 0)
+		.AddGrid(B_USE_HALF_ITEM_SPACING, 0)
 			.Add(commandTextControl->CreateLabelLayoutItem(), 0, 0)
 			.Add(commandTextControl->CreateTextViewLayoutItem(), 1, 0, 2, 1)
+			.Add(chooseCommandButton, 3, 0)
 			.Add(repeatCheckBox, 1, 1)
 			.Add(alarmCheckBox, 1, 2)
 			.Add(pathTextControl->CreateLabelLayoutItem(), 0, 3)
 			.Add(pathTextControl->CreateTextViewLayoutItem(), 1, 3)
-			.Add(pathCheckBox, 2, 3)
+			.Add(choosePathButton, 2, 3)
+			.Add(pathCheckBox, 3, 3)
 			.SetColumnWeight(1, 10.f)
 			.End()
 		.Add(new BSeparatorView(B_HORIZONTAL))
@@ -97,6 +124,10 @@ CommandTimerWindow::CommandTimerWindow(BRect cTWindowRect)
 
 	runner
 		= new BMessageRunner(BMessenger(this), new BMessage('PULS'), 1000000);
+
+	choosePanel = new BFilePanel(B_OPEN_PANEL, NULL, NULL,
+		B_FILE_NODE | B_DIRECTORY_NODE, false);
+	choosePanel->SetTarget(this);
 }
 
 
@@ -153,7 +184,29 @@ CommandTimerWindow::MessageReceived(BMessage* cTMessage)
 			}
 			break;
 		}
-
+		case 'CHCB':
+		{
+			mode = COMMAND_MODE;
+			choosePanel->Show();
+			break;
+		}
+		case 'CHPB':
+		{
+			mode = PATH_MODE;
+			choosePanel->Show();
+			break;
+		}
+		case B_REFS_RECEIVED:
+		{
+			if (mode == COMMAND_MODE)
+				commandTextControl->SetText(getPath(cTMessage));
+			else if (mode == PATH_MODE) {
+				pathTextControl->SetText(getFolder(cTMessage));
+				path = true;
+				pathTextControl->SetEnabled(path);
+				pathCheckBox->SetValue(path);
+			}
+		}
 		default:
 			BWindow::MessageReceived(cTMessage);
 			break;

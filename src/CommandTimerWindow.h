@@ -12,12 +12,18 @@
 
 #include <Application.h>
 #include <CheckBox.h>
+#include <FilePanel.h>
 #include <InterfaceKit.h>
 #include <MessageRunner.h>
 #include <Spinner.h>
 #include <SupportKit.h>
 #include <TextControl.h>
 #include <Window.h>
+
+enum panelMode {
+	COMMAND_MODE,
+	PATH_MODE,
+};
 
 class CommandTimerWindow : public BWindow
 {
@@ -48,6 +54,8 @@ private:
 	bool 		path;
 
 	BButton* 	startStopButton;
+	BButton*	chooseCommandButton;
+	BButton*	choosePathButton;
 	BCheckBox* 	repeatCheckBox;
 	BCheckBox* 	alarmCheckBox;
 	BCheckBox* 	pathCheckBox;
@@ -57,6 +65,8 @@ private:
 	BSpinner* 	minsSpinner;
 	BSpinner* 	secsSpinner;
 	BMessageRunner* runner;
+	panelMode	mode;
+	BFilePanel*	choosePanel;
 };
 
 #endif
