@@ -1,0 +1,12 @@
+1	English	application/x-vnd.jas.CommandTimer	1250448545
+Alarm	TimerWindow		Alarm
+CommandTimer	System name		CommandTimer
+Stop	TimerWindow		Stopp
+Minutes:	TimerWindow		Minuten:
+Execute in:	TimerWindow		Ausführen in:
+Hours:	TimerWindow		Stunden:
+Repeat	TimerWindow		Wiederholen
+Command:	TimerWindow		Befehl:
+Seconds:	TimerWindow		Sekunden:
+Error	TimerWindow		Fehler
+Start	TimerWindow		Start

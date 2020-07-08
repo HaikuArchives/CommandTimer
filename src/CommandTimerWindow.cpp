@@ -21,7 +21,7 @@
 
 CommandTimerWindow::CommandTimerWindow(BRect cTWindowRect)
 	:
-	BWindow(cTWindowRect, "CommandTimer", B_TITLED_WINDOW,
+	BWindow(cTWindowRect, B_TRANSLATE_SYSTEM_NAME("CommandTimer"), B_TITLED_WINDOW,
 		B_AUTO_UPDATE_SIZE_LIMITS | B_NOT_V_RESIZABLE | B_NOT_ZOOMABLE)
 {
 	commandTextControl = new BTextControl(
