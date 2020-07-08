@@ -12,6 +12,7 @@
 #include <Catalog.h>
 #include <ControlLook.h>
 #include <LayoutBuilder.h>
+#include <Path.h>
 #include <SeparatorView.h>
 
 #undef B_TRANSLATION_CONTEXT
@@ -66,11 +67,11 @@ CommandTimerWindow::CommandTimerWindow(BRect cTWindowRect)
 		.AddGrid(B_USE_DEFAULT_SPACING, 0)
 			.Add(commandTextControl->CreateLabelLayoutItem(), 0, 0)
 			.Add(commandTextControl->CreateTextViewLayoutItem(), 1, 0, 2, 1)
-			.Add(pathTextControl->CreateLabelLayoutItem(), 0, 1)
-			.Add(pathTextControl->CreateTextViewLayoutItem(), 1, 1)
-			.Add(pathCheckBox, 2, 1)
-			.Add(repeatCheckBox, 1, 2)
-			.Add(alarmCheckBox, 1, 3)
+			.Add(repeatCheckBox, 1, 1)
+			.Add(alarmCheckBox, 1, 2)
+			.Add(pathTextControl->CreateLabelLayoutItem(), 0, 3)
+			.Add(pathTextControl->CreateTextViewLayoutItem(), 1, 3)
+			.Add(pathCheckBox, 2, 3)
 			.SetColumnWeight(1, 10.f)
 			.End()
 		.Add(new BSeparatorView(B_HORIZONTAL))
@@ -131,11 +132,73 @@ CommandTimerWindow::MessageReceived(BMessage* cTMessage)
 		case 'PATH':
 			togglePath();
 			break;
+		case B_SIMPLE_DATA:
+		{
+			if (cTMessage->WasDropped()) {
+				BRect commandRect = commandTextControl->ConvertToScreen(commandTextControl->Bounds());
+				BRect pathRect = pathTextControl->ConvertToScreen(pathTextControl->Bounds());
+				BPoint dropPoint = cTMessage->DropPoint();
+
+				if (commandRect.Contains(dropPoint))
+					commandTextControl->SetText(getPath(cTMessage));
+
+				if (pathRect.Contains(dropPoint)) {
+					pathTextControl->SetText(getFolder(cTMessage));
+					path = true;
+					pathTextControl->SetEnabled(path);
+					pathCheckBox->SetValue(path);
+				}
+			}
+			break;
+		}
 
 		default:
 			BWindow::MessageReceived(cTMessage);
 			break;
 	}
+}
+
+
+BString
+CommandTimerWindow::getPath(BMessage* message)
+{
+	int32 ref_num;
+	entry_ref ref;
+	BString text = "Error";
+
+	if (message->FindRef("refs", &ref) == B_OK) {
+		BPath path;
+		BEntry* entry = new BEntry(&ref);
+		entry->GetPath(&path);
+		text = path.Path();
+	}
+	return(text);
+}
+
+
+BString
+CommandTimerWindow::getFolder(BMessage* message)
+{
+	entry_ref ref;
+	BString text = "Error";
+
+	if (message->FindRef("refs", &ref) == B_OK) {
+		BPath path;
+		BEntry* entry = new BEntry(&ref);
+		entry->GetPath(&path);
+
+		if (entry->IsSymLink()) {	// Resolve symlinked folders only
+			entry = new BEntry(&ref, true);
+			if (entry->IsDirectory())
+				entry->GetPath(&path);
+		}
+
+		if (!entry->IsDirectory())
+			path.GetParent(&path);
+
+		text = path.Path();
+	}
+	return(text);
 }
 
 

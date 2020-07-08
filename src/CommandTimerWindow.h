@@ -35,6 +35,8 @@ public:
 	void togglePath();
 	void setPermissions(bool permission);
 	void getTime();
+	BString getPath(BMessage* message);
+	BString getFolder(BMessage* message);
 	void executeCommand();
 
 private:
