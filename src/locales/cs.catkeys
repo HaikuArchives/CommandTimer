@@ -1,0 +1,12 @@
+1	Czech	application/x-vnd.jas.CommandTimer	1250448545
+Alarm	TimerWindow		Alarm
+Command:	TimerWindow		Příkaz:
+Error	TimerWindow		Chyba
+Execute in:	TimerWindow		Spustit v:
+Hours:	TimerWindow		Hodin\y:
+Minutes:	TimerWindow		Minut/y:
+Repeat	TimerWindow		Opakovat
+Seconds:	TimerWindow		Sekund\y:
+Start	TimerWindow		Start
+Stop	TimerWindow		Stop
+CommandTimer	System name		Časovač příkazu

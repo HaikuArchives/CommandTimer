@@ -1,0 +1,12 @@
+1	Romanian	application/x-vnd.jas.CommandTimer	1250448545
+Alarm	TimerWindow		Alarmă
+Command:	TimerWindow		Comandă:
+Error	TimerWindow		Eroare
+Execute in:	TimerWindow		Execută în:
+Hours:	TimerWindow		Ore:
+Minutes:	TimerWindow		Minute:
+Repeat	TimerWindow		Repetă
+Seconds:	TimerWindow		Secunde:
+Start	TimerWindow		Începe
+Stop	TimerWindow		Oprește
+CommandTimer	System name		CommandTimer

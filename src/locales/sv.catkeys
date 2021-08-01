@@ -1,0 +1,12 @@
+1	Swedish	application/x-vnd.jas.CommandTimer	1250448545
+Alarm	TimerWindow		Alarm
+Command:	TimerWindow		Kommando:
+Error	TimerWindow		Fel
+Execute in:	TimerWindow		Kör i:
+Hours:	TimerWindow		Timmar:
+Minutes:	TimerWindow		Minuter:
+Repeat	TimerWindow		Upprepa
+Seconds:	TimerWindow		Sekunder:
+Start	TimerWindow		Start
+Stop	TimerWindow		Stopp
+CommandTimer	System name		CommandTimer

@@ -1,0 +1,12 @@
+1	Catalan	application/x-vnd.jas.CommandTimer	1250448545
+Alarm	TimerWindow		Alarma
+Command:	TimerWindow		Ordre:
+Error	TimerWindow		Error
+Execute in:	TimerWindow		Executa d'aquí a:
+Hours:	TimerWindow		Hores:
+Minutes:	TimerWindow		Minuts:
+Repeat	TimerWindow		Repeteix-ho
+Seconds:	TimerWindow		Segons:
+Start	TimerWindow		Inicia
+Stop	TimerWindow		Interromp
+CommandTimer	System name		Temporitzador d'ordres

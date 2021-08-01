@@ -1,0 +1,12 @@
+1	Ukrainian	application/x-vnd.jas.CommandTimer	1250448545
+Alarm	TimerWindow		Сигнал
+Command:	TimerWindow		Команда:
+Error	TimerWindow		Помилка
+Execute in:	TimerWindow		Запустити:
+Hours:	TimerWindow		Годин:
+Minutes:	TimerWindow		Хвилин:
+Repeat	TimerWindow		Повторити
+Seconds:	TimerWindow		Секунд:
+Start	TimerWindow		Старт
+Stop	TimerWindow		Стоп
+CommandTimer	System name		CommandTimer

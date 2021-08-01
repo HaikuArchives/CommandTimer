@@ -1,0 +1,12 @@
+1	Spanish	application/x-vnd.jas.CommandTimer	1250448545
+Alarm	TimerWindow		Alarma
+Command:	TimerWindow		Comando:
+Error	TimerWindow		Error
+Execute in:	TimerWindow		Ejecutar en:
+Hours:	TimerWindow		Horas:
+Minutes:	TimerWindow		Minutos:
+Repeat	TimerWindow		Repetir
+Seconds:	TimerWindow		Segundos:
+Start	TimerWindow		Comenzar
+Stop	TimerWindow		Detener
+CommandTimer	System name		CommandTimer

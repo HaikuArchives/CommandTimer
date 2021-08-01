@@ -1,0 +1,12 @@
+1	Friulian	application/x-vnd.jas.CommandTimer	1250448545
+Alarm	TimerWindow		Alarme
+Command:	TimerWindow		Comant:
+Error	TimerWindow		Erôr
+Execute in:	TimerWindow		Eseguìs aes:
+Hours:	TimerWindow		Oris:
+Minutes:	TimerWindow		Minûts:
+Repeat	TimerWindow		Ripet
+Seconds:	TimerWindow		Seconts:
+Start	TimerWindow		Inizie
+Stop	TimerWindow		Ferme
+CommandTimer	System name		Temporizadôr di comants

@@ -1,0 +1,12 @@
+1	Turkish	application/x-vnd.jas.CommandTimer	1250448545
+Alarm	TimerWindow		Alarm
+Command:	TimerWindow		Komut:
+Error	TimerWindow		Hata
+Execute in:	TimerWindow		Şu zamanda çalıştır:
+Hours:	TimerWindow		Saat:
+Minutes:	TimerWindow		Dakika:
+Repeat	TimerWindow		Yinele
+Seconds:	TimerWindow		Saniye:
+Start	TimerWindow		Başla
+Stop	TimerWindow		Dur
+CommandTimer	System name		CommandTimer
